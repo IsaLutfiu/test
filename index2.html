@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOLDER.GFX — Graphic Designer Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f0eb;
+    --cream: #ede6dc;
+    --accent: #c8a97e;
+    --gold: #b8956a;
+    --muted: #6b6358;
+    --border: rgba(200,169,126,0.2);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    cursor: none;
+    overflow-x: hidden;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+  }
+  .cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--white);
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s;
+  }
+  .cursor-ring {
+    width: 40px; height: 40px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease-out;
+    opacity: 0.6;
+  }
+  body:has(a:hover) .cursor-ring,
+  body:has(button:hover) .cursor-ring { width: 60px; height: 60px; opacity: 1; }
+
+  /* Noise Overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 4rem;
+    mix-blend-mode: normal;
+  }
+  nav::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 4rem; right: 4rem;
+    height: 1px;
+    background: var(--border);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 3rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--accent);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--accent);
+    padding: 0.7rem 1.8rem;
+    text-decoration: none;
+    transition: background 0.3s;
+  }
+  .nav-cta:hover { background: var(--gold); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 4rem 6rem 4rem;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.3s;
+  }
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 10vw, 9rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.5s;
+  }
+  .hero-name span {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .hero-desc {
+    margin-top: 2.5rem;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--muted);
+    max-width: 380px;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.7s;
+  }
+  .hero-actions {
+    margin-top: 3rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 0.9s;
+  }
+  .btn-primary {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--accent);
+    padding: 1rem 2.5rem;
+    text-decoration: none;
+    transition: all 0.3s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--gold); transform: translateY(-2px); }
+  .btn-ghost {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .btn-ghost::after { content: '→'; transition: transform 0.3s; }
+  .btn-ghost:hover { color: var(--white); }
+  .btn-ghost:hover::after { transform: translateX(5px); }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-image-frame {
+    position: absolute;
+    inset: 8rem 4rem 4rem 2rem;
+    background: linear-gradient(135deg, #1a1510, #0f0d09);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .hero-image-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 30% 20%, rgba(200,169,126,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 80%, rgba(184,149,106,0.1) 0%, transparent 50%);
+  }
+  .hero-image-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .hero-monogram {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 10rem;
+    color: rgba(200,169,126,0.08);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    user-select: none;
+  }
+  .hero-badge {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    width: 110px; height: 110px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    animation: spin 15s linear infinite;
+  }
+  .hero-badge-text {
+    position: absolute;
+    width: 100%; height: 100%;
+  }
+  .hero-badge-text textPath { font-family: 'DM Sans', sans-serif; }
+
+  .hero-stats {
+    position: absolute;
+    bottom: 6rem;
+    left: 4rem;
+    display: flex;
+    gap: 3rem;
+    opacity: 0;
+    animation: fadeUp 1s ease forwards 1.1s;
+  }
+  .stat-item { text-align: center; }
+  .stat-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards 1.4s;
+  }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollPulse 2s ease infinite;
+  }
+
+  /* ABOUT */
+  #about {
+    padding: 10rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 8rem;
+    align-items: center;
+    border-top: 1px solid var(--border);
+  }
+  .about-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2rem;
+  }
+  .about-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--white);
+    margin-bottom: 2.5rem;
+  }
+  .about-heading em { font-style: italic; color: var(--accent); }
+  .about-text {
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+  .skill-item {
+    padding: 1.2rem 1.5rem;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .skill-item::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+  .skill-item:hover { border-color: rgba(200,169,126,0.5); }
+  .skill-item:hover::before { width: 100%; }
+  .skill-name {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+  .skill-desc { font-size: 0.8rem; color: var(--muted); }
+
+  .about-image-col { position: relative; }
+  .about-portrait {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: linear-gradient(160deg, #1c1712, #0d0b08);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .about-portrait::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 40% 30%, rgba(200,169,126,0.12) 0%, transparent 65%);
+  }
+  .portrait-monogram {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 8rem;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(200,169,126,0.06);
+    user-select: none;
+  }
+  .experience-badge {
+    position: absolute;
+    top: -1.5rem; right: -1.5rem;
+    width: 120px; height: 120px;
+    background: var(--accent);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+  }
+  .exp-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: var(--black);
+    line-height: 1;
+  }
+  .exp-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--black);
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  /* SERVICES */
+  #services {
+    padding: 8rem 4rem;
+    border-top: 1px solid var(--border);
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 5rem;
+  }
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    color: var(--white);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+  }
+  .section-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--muted);
+    max-width: 300px;
+    text-align: right;
+    line-height: 1.6;
+  }
+  .services-list { display: flex; flex-direction: column; }
+  .service-item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    align-items: center;
+    gap: 3rem;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 0; height: 100%;
+    background: rgba(200,169,126,0.04);
+    transition: width 0.4s ease;
+  }
+  .service-item:hover::before { width: 100%; }
+  .service-item:hover { padding-left: 1rem; }
+  .service-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--border);
+    letter-spacing: 0.1em;
+  }
+  .service-item:hover .service-number { color: var(--accent); }
+  .service-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 0.4rem;
+    transition: color 0.3s;
+  }
+  .service-item:hover .service-name { color: var(--accent); }
+  .service-tags {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.8rem;
+  }
+  .service-arrow {
+    font-size: 1.2rem;
+    color: var(--muted);
+    transition: all 0.3s;
+  }
+  .service-item:hover .service-arrow { color: var(--accent); transform: translateX(8px); }
+
+  /* PORTFOLIO */
+  #portfolio {
+    padding: 8rem 4rem;
+    border-top: 1px solid var(--border);
+  }
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto;
+    gap: 1.5rem;
+    margin-top: 4rem;
+  }
+  .portfolio-item {
+    background: linear-gradient(135deg, #161210, #0c0a08);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.3s;
+  }
+  .portfolio-item:hover { border-color: rgba(200,169,126,0.4); }
+  .portfolio-item:nth-child(1) { grid-column: 1 / 8; grid-row: 1; aspect-ratio: 16/10; }
+  .portfolio-item:nth-child(2) { grid-column: 8 / 13; grid-row: 1; aspect-ratio: 4/5; }
+  .portfolio-item:nth-child(3) { grid-column: 1 / 5; grid-row: 2; aspect-ratio: 4/5; }
+  .portfolio-item:nth-child(4) { grid-column: 5 / 9; grid-row: 2; aspect-ratio: 4/3; }
+  .portfolio-item:nth-child(5) { grid-column: 9 / 13; grid-row: 2; aspect-ratio: 4/3; }
+
+  .portfolio-item-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2rem;
+    background: linear-gradient(to top, rgba(10,10,10,0.9) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .portfolio-item:hover .portfolio-item-inner { opacity: 1; }
+  .portfolio-cat {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+  .portfolio-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--white);
+  }
+  .portfolio-bg {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .p-shape { position: absolute; }
+  .p-shape-1 { width: 60%; height: 60%; border: 1px solid rgba(200,169,126,0.06); }
+  .p-shape-2 { width: 35%; height: 35%; border: 1px solid rgba(200,169,126,0.1); transform: rotate(45deg); }
+  .p-shape-3 { width: 80%; height: 80%; border-radius: 50%; border: 1px solid rgba(200,169,126,0.04); }
+  .p-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    color: rgba(200,169,126,0.05);
+    letter-spacing: 0.1em;
+  }
+  .portfolio-item:nth-child(1) .p-text { font-size: 8rem; }
+
+  /* PROCESS */
+  #process {
+    padding: 8rem 4rem;
+    border-top: 1px solid var(--border);
+    background: linear-gradient(to bottom, transparent, rgba(200,169,126,0.03), transparent);
+  }
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    margin-top: 5rem;
+  }
+  .process-step {
+    padding: 3rem 2rem;
+    border: 1px solid var(--border);
+    position: relative;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .process-step:hover { border-color: rgba(200,169,126,0.4); transform: translateY(-5px); }
+  .process-step::after {
+    content: '';
+    position: absolute;
+    top: 50%; right: -2rem;
+    width: 2rem; height: 1px;
+    background: var(--border);
+  }
+  .process-step:last-child::after { display: none; }
+  .step-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: rgba(200,169,126,0.1);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+  }
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--white);
+    margin-bottom: 1rem;
+    font-weight: 400;
+  }
+  .step-text { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+
+  /* TESTIMONIALS */
+  #testimonials {
+    padding: 8rem 4rem;
+    border-top: 1px solid var(--border);
+  }
+  .testimonials-track {
+    margin-top: 4rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  .testimonial-card {
+    padding: 3rem;
+    border: 1px solid var(--border);
+    position: relative;
+    transition: border-color 0.3s;
+  }
+  .testimonial-card:hover { border-color: rgba(200,169,126,0.4); }
+  .testimonial-card::before {
+    content: '"';
+    position: absolute;
+    top: 1.5rem; left: 2.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 6rem;
+    color: rgba(200,169,126,0.1);
+    line-height: 1;
+  }
+  .testimonial-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--white);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+  }
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .author-avatar {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, rgba(200,169,126,0.2), rgba(200,169,126,0.05));
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: var(--accent);
+  }
+  .author-name {
+    font-size: 0.85rem;
+    color: var(--white);
+    font-weight: 400;
+  }
+  .author-role { font-size: 0.75rem; color: var(--muted); }
+
+  /* CONTACT */
+  #contact {
+    padding: 8rem 4rem;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8rem;
+    align-items: start;
+  }
+  .contact-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 8vw, 7rem);
+    line-height: 0.9;
+    color: var(--white);
+    letter-spacing: 0.02em;
+    margin: 1.5rem 0 2rem;
+  }
+  .contact-big span {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--accent);
+  }
+  .contact-email {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1rem;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+    transition: border-color 0.3s;
+    margin-bottom: 3rem;
+  }
+  .contact-email:hover { border-color: var(--accent); }
+  .social-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .social-link {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .social-link:hover { color: var(--accent); }
+
+  .contact-form { display: flex; flex-direction: column; gap: 1.5rem; }
+  .form-group { position: relative; }
+  .form-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 0.8rem;
+  }
+  .form-input, .form-textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 0;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.3s;
+    resize: none;
+  }
+  .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+  .form-input::placeholder, .form-textarea::placeholder { color: rgba(107,99,88,0.5); }
+  .form-textarea { min-height: 120px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .submit-btn {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 1.2rem 2.5rem;
+    cursor: none;
+    transition: all 0.3s;
+    margin-top: 0.5rem;
+    align-self: flex-start;
+  }
+  .submit-btn:hover { background: var(--accent); color: var(--black); }
+
+  /* FOOTER */
+  footer {
+    padding: 3rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+  }
+  .footer-copy { font-size: 0.75rem; color: var(--muted); }
+  .footer-back {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .footer-back:hover { color: var(--accent); }
+
+  /* MARQUEE */
+  .marquee-section {
+    padding: 3rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    background: rgba(200,169,126,0.03);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 4rem;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+    width: max-content;
+  }
+  .marquee-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+  }
+  .marquee-item::after {
+    content: '✦';
+    color: var(--accent);
+    font-size: 0.7rem;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.3; transform: scaleY(0.6); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* Intersection Observer animations */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    nav { padding: 1.5rem 2rem; }
+    nav::after { left: 2rem; right: 2rem; }
+    .nav-links { gap: 2rem; }
+    #hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hero-left { padding: 10rem 2rem 4rem; justify-content: flex-start; }
+    .hero-stats { left: 2rem; }
+    #about { grid-template-columns: 1fr; gap: 4rem; padding: 6rem 2rem; }
+    .about-image-col { order: -1; }
+    .about-portrait { aspect-ratio: 16/9; }
+    #services { padding: 6rem 2rem; }
+    .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .section-subtitle { text-align: left; }
+    .service-item { grid-template-columns: 60px 1fr auto; gap: 1.5rem; }
+    #portfolio { padding: 6rem 2rem; }
+    .portfolio-grid { grid-template-columns: 1fr 1fr; }
+    .portfolio-item:nth-child(1) { grid-column: 1 / 3; grid-row: 1; }
+    .portfolio-item:nth-child(2) { grid-column: 1 / 2; grid-row: 2; }
+    .portfolio-item:nth-child(3) { grid-column: 2 / 3; grid-row: 2; }
+    .portfolio-item:nth-child(4) { grid-column: 1 / 2; grid-row: 3; }
+    .portfolio-item:nth-child(5) { grid-column: 2 / 3; grid-row: 3; }
+    .process-steps { grid-template-columns: repeat(2, 1fr); }
+    .process-step::after { display: none; }
+    #testimonials { padding: 6rem 2rem; }
+    .testimonials-track { grid-template-columns: 1fr; }
+    #contact { grid-template-columns: 1fr; gap: 4rem; padding: 6rem 2rem; }
+    footer { padding: 2rem; flex-direction: column; gap: 1rem; text-align: center; }
+    #process { padding: 6rem 2rem; }
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 1.2rem 1.5rem; }
+    nav::after { left: 1.5rem; right: 1.5rem; }
+    .nav-links { display: none; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr; }
+    .portfolio-grid { grid-template-columns: 1fr; }
+    .portfolio-item:nth-child(n) { grid-column: 1; grid-row: auto; aspect-ratio: 16/10; }
+    .social-links { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor">
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">ARTÉ</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#portfolio">Work</a></li>
+    <li><a href="#process">Process</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Let's Talk</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <p class="hero-tag">✦ Creative Director & Graphic Designer</p>
+    <h1 class="hero-name">
+      VISUAL
+      <span>Narratives</span>
+      THAT LAST
+    </h1>
+    <p class="hero-desc">
+      Crafting identities, experiences, and stories through design that transforms brands into unforgettable presences.
+    </p>
+    <div class="hero-actions">
+      <a href="#portfolio" class="btn-primary">View Portfolio</a>
+      <a href="#contact" class="btn-ghost">Start a Project</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-number">8+</div>
+        <div class="stat-label">Years</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">140</div>
+        <div class="stat-label">Projects</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">60</div>
+        <div class="stat-label">Clients</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-image-frame">
+      <div class="hero-image-placeholder">
+        <div class="hero-monogram">AG</div>
+      </div>
+    </div>
+    <div class="hero-badge">
+      <svg class="hero-badge-text" viewBox="0 0 110 110">
+        <path id="circle-path" d="M 55 55 m -35 0 a 35 35 0 1 1 70 0 a 35 35 0 1 1 -70 0" fill="none"/>
+        <text fill="#c8a97e" font-size="8.5" letter-spacing="3.5">
+          <textPath href="#circle-path">AVAILABLE FOR PROJECTS · 2026 · </textPath>
+        </text>
+      </svg>
+      <span style="font-size:1.2rem;">✦</span>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <span class="marquee-item">Brand Identity</span>
+    <span class="marquee-item">Visual Design</span>
+    <span class="marquee-item">Art Direction</span>
+    <span class="marquee-item">Typography</span>
+    <span class="marquee-item">Motion Graphics</span>
+    <span class="marquee-item">UI / UX Design</span>
+    <span class="marquee-item">Print Design</span>
+    <span class="marquee-item">Packaging</span>
+    <span class="marquee-item">Brand Identity</span>
+    <span class="marquee-item">Visual Design</span>
+    <span class="marquee-item">Art Direction</span>
+    <span class="marquee-item">Typography</span>
+    <span class="marquee-item">Motion Graphics</span>
+    <span class="marquee-item">UI / UX Design</span>
+    <span class="marquee-item">Print Design</span>
+    <span class="marquee-item">Packaging</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-text-col">
+    <p class="about-label reveal">✦ About Me</p>
+    <h2 class="about-heading reveal reveal-delay-1">
+      Design is <em>not</em> decoration.<br>
+      It is communication.
+    </h2>
+    <p class="about-text reveal reveal-delay-2">
+      I'm a senior graphic designer and creative director with over 8 years of experience building meaningful brand experiences. I partner with ambitious companies and individuals who understand that extraordinary design is not a luxury—it's a competitive advantage.
+    </p>
+    <p class="about-text reveal reveal-delay-2">
+      My work spans brand identity systems, editorial design, digital interfaces, and motion—always rooted in strategy and executed with precision.
+    </p>
+    <div class="skills-grid reveal reveal-delay-3">
+      <div class="skill-item">
+        <div class="skill-name">Brand Identity</div>
+        <div class="skill-desc">Logo, typography, color systems</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Editorial Design</div>
+        <div class="skill-desc">Books, magazines, reports</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Digital & UI</div>
+        <div class="skill-desc">Interfaces, web, app design</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Art Direction</div>
+        <div class="skill-desc">Photography, campaigns</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Motion Design</div>
+        <div class="skill-desc">Animation, video graphics</div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-name">Packaging</div>
+        <div class="skill-desc">Product & retail design</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-image-col reveal reveal-delay-2">
+    <div class="about-portrait">
+      <div class="portrait-monogram">AG</div>
+    </div>
+    <div class="experience-badge">
+      <div class="exp-number">8+</div>
+      <div class="exp-label">Years of<br>Experience</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-label">✦ What I Do</p>
+      <h2 class="section-title">SERVICES</h2>
+    </div>
+    <p class="section-subtitle">End-to-end design solutions crafted to elevate your brand and drive results.</p>
+  </div>
+  <div class="services-list">
+    <div class="service-item reveal">
+      <span class="service-number">01</span>
+      <div class="service-content">
+        <div class="service-name">Brand Identity & Strategy</div>
+        <div class="service-tags">
+          <span class="tag">Logo Design</span>
+          <span class="tag">Brand Guidelines</span>
+          <span class="tag">Visual Identity</span>
+          <span class="tag">Brand Voice</span>
+        </div>
+      </div>
+      <span class="service-arrow">→</span>
+    </div>
+    <div class="service-item reveal reveal-delay-1">
+      <span class="service-number">02</span>
+      <div class="service-content">
+        <div class="service-name">Print & Editorial Design</div>
+        <div class="service-tags">
+          <span class="tag">Books</span>
+          <span class="tag">Magazines</span>
+          <span class="tag">Annual Reports</span>
+          <span class="tag">Brochures</span>
+        </div>
+      </div>
+      <span class="service-arrow">→</span>
+    </div>
+    <div class="service-item reveal reveal-delay-2">
+      <span class="service-number">03</span>
+      <div class="service-content">
+        <div class="service-name">Digital & UI/UX Design</div>
+        <div class="service-tags">
+          <span class="tag">Website Design</span>
+          <span class="tag">App UI</span>
+          <span class="tag">Prototyping</span>
+          <span class="tag">Design Systems</span>
+        </div>
+      </div>
+      <span class="service-arrow">→</span>
+    </div>
+    <div class="service-item reveal reveal-delay-3">
+      <span class="service-number">04</span>
+      <div class="service-content">
+        <div class="service-name">Packaging & Product Design</div>
+        <div class="service-tags">
+          <span class="tag">Retail Packaging</span>
+          <span class="tag">Label Design</span>
+          <span class="tag">3D Mockups</span>
+        </div>
+      </div>
+      <span class="service-arrow">→</span>
+    </div>
+    <div class="service-item reveal reveal-delay-4">
+      <span class="service-number">05</span>
+      <div class="service-content">
+        <div class="service-name">Motion & Visual Content</div>
+        <div class="service-tags">
+          <span class="tag">Animation</span>
+          <span class="tag">Social Media Graphics</span>
+          <span class="tag">Video Titles</span>
+        </div>
+      </div>
+      <span class="service-arrow">→</span>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-label">✦ Selected Work</p>
+      <h2 class="section-title">PORTFOLIO</h2>
+    </div>
+    <p class="section-subtitle">A curated selection of projects across identity, print, and digital design.</p>
+  </div>
+  <div class="portfolio-grid">
+    <div class="portfolio-item reveal">
+      <div class="portfolio-bg">
+        <div class="p-shape p-shape-1"></div>
+        <div class="p-shape p-shape-3"></div>
+        <span class="p-text">NOVA</span>
+      </div>
+      <div class="portfolio-item-inner">
+        <div class="portfolio-cat">Brand Identity</div>
+        <div class="portfolio-title">Nova Collective — Brand System</div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal reveal-delay-1">
+      <div class="portfolio-bg">
+        <div class="p-shape p-shape-2"></div>
+        <span class="p-text">ÆRA</span>
+      </div>
+      <div class="portfolio-item-inner">
+        <div class="portfolio-cat">Editorial</div>
+        <div class="portfolio-title">Æra Magazine — Issue 12</div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal reveal-delay-2">
+      <div class="portfolio-bg">
+        <div class="p-shape p-shape-3"></div>
+        <span class="p-text">PKG</span>
+      </div>
+      <div class="portfolio-item-inner">
+        <div class="portfolio-cat">Packaging</div>
+        <div class="portfolio-title">Botaniq — Luxury Skincare</div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal reveal-delay-1">
+      <div class="portfolio-bg">
+        <div class="p-shape p-shape-1"></div>
+        <div class="p-shape p-shape-2"></div>
+        <span class="p-text">UI</span>
+      </div>
+      <div class="portfolio-item-inner">
+        <div class="portfolio-cat">Digital / UI</div>
+        <div class="portfolio-title">Luxe App — Interface Design</div>
+      </div>
+    </div>
+    <div class="portfolio-item reveal reveal-delay-2">
+      <div class="portfolio-bg">
+        <div class="p-shape p-shape-3"></div>
+        <div class="p-shape p-shape-2"></div>
+        <span class="p-text">DIR</span>
+      </div>
+      <div class="portfolio-item-inner">
+        <div class="portfolio-cat">Art Direction</div>
+        <div class="portfolio-title">Volta — Campaign Series</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-label">✦ How I Work</p>
+      <h2 class="section-title">PROCESS</h2>
+    </div>
+    <p class="section-subtitle">A clear, collaborative process for consistent, exceptional results.</p>
+  </div>
+  <div class="process-steps">
+    <div class="process-step reveal">
+      <div class="step-number">01</div>
+      <div class="step-title">Discovery</div>
+      <p class="step-text">Deep dive into your brand, goals, audience, and competitive landscape. Understanding is the foundation of meaningful design.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-1">
+      <div class="step-number">02</div>
+      <div class="step-title">Strategy</div>
+      <p class="step-text">Translate insights into a clear creative direction. Define the visual language, positioning, and communication strategy.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-2">
+      <div class="step-number">03</div>
+      <div class="step-title">Design</div>
+      <p class="step-text">Craft visual solutions with precision and intention. Explore concepts, refine details, and achieve visual excellence.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-3">
+      <div class="step-number">04</div>
+      <div class="step-title">Delivery</div>
+      <p class="step-text">Final production files, guidelines, and ongoing support. Everything you need to bring the design to life.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-label">✦ Client Words</p>
+      <h2 class="section-title">REVIEWS</h2>
+    </div>
+  </div>
+  <div class="testimonials-track">
+    <div class="testimonial-card reveal">
+      <p class="testimonial-text">
+        Working with this designer transformed our brand entirely. The attention to detail and the ability to translate our vision into something truly remarkable exceeded every expectation we had.
+      </p>
+      <div class="testimonial-author">
+        <div class="author-avatar">MR</div>
+        <div>
+          <div class="author-name">Marco Ricci</div>
+          <div class="author-role">CEO, Nova Collective</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-1">
+      <p class="testimonial-text">
+        The creative process was seamless and the results speak for themselves. Our packaging stands out on every shelf. The investment in great design has paid dividends beyond measure.
+      </p>
+      <div class="testimonial-author">
+        <div class="author-avatar">SL</div>
+        <div>
+          <div class="author-name">Sophie Laurent</div>
+          <div class="author-role">Founder, Botaniq</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal reveal-delay-2">
+      <p class="testimonial-text">
+        A rare talent who combines strategic thinking with exceptional aesthetic sensibility. The redesign elevated our digital presence and user engagement increased by 40% within three months.
+      </p>
+      <div class="testimonial-author">
+        <div class="author-avatar">JK</div>
+        <div>
+          <div class="author-name">James Kim</div>
+          <div class="author-role">Product Director, Luxe</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-left reveal">
+    <p class="about-label">✦ Let's Connect</p>
+    <h2 class="contact-big">
+      LET'S
+      <span>Create</span>
+      TOGETHER
+    </h2>
+    <a href="mailto:hello@arte-design.com" class="contact-email">
+      hello@arte-design.com →
+    </a>
+    <div class="social-links">
+      <a href="#" class="social-link">Behance</a>
+      <a href="#" class="social-link">Dribbble</a>
+      <a href="#" class="social-link">Instagram</a>
+      <a href="#" class="social-link">LinkedIn</a>
+    </div>
+  </div>
+  <div class="contact-form reveal reveal-delay-1">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input type="text" class="form-input" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Last Name</label>
+        <input type="text" class="form-input" placeholder="Your last name">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" class="form-input" placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Project Type</label>
+      <input type="text" class="form-input" placeholder="Brand Identity, UI Design, etc.">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tell Me About Your Project</label>
+      <textarea class="form-textarea" placeholder="Describe your vision, goals, and timeline..."></textarea>
+    </div>
+    <button class="submit-btn" onclick="handleSubmit(this)">Send Message ✦</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">ARTÉ</div>
+  <p class="footer-copy">© 2026 Arté Design Studio. All rights reserved.</p>
+  <a href="#hero" class="footer-back">↑ Back to Top</a>
+</footer>
+
+<script>
+  // Custom Cursor
+  const cursor = document.getElementById('cursor');
+  const dot = cursor.querySelector('.cursor-dot');
+  const ring = cursor.querySelector('.cursor-ring');
+  let mouseX = 0, mouseY = 0;
+  let ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    dot.style.left = mouseX + 'px';
+    dot.style.top = mouseY + 'px';
+  });
+
+  function animateCursor() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.left = ringX + 'px';
+    ring.style.top = ringY + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  // Intersection Observer for scroll reveals
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Form submit
+  function handleSubmit(btn) {
+    const original = btn.textContent;
+    btn.textContent = 'Message Sent ✦';
+    btn.style.background = 'rgba(200,169,126,0.15)';
+    btn.style.color = 'var(--accent)';
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 3000);
+  }
+
+  // Navbar background on scroll
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) {
+      nav.style.background = 'rgba(10,10,10,0.95)';
+      nav.style.backdropFilter = 'blur(20px)';
+    } else {
+      nav.style.background = 'transparent';
+      nav.style.backdropFilter = 'none';
+    }
+  });
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
